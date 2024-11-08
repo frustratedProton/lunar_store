@@ -41,3 +41,10 @@ model Folder {
     userId Int
     files  File[]
 }
+
+model Session {
+    id        String   @id @default(uuid())
+    sid       String   @unique
+    data      String
+    expiresAt DateTime
+}

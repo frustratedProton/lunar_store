@@ -1,8 +1,9 @@
 import express from 'express';
 import session from 'express-session';
 import { PrismaSessionStore } from '@quixo3/prisma-session-store';
-import passport from 'passport';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client'
+import passport from './config/passport.js';
+import router from './routers/indexRouter.js';
 
 const app = express();
 const prisma = new PrismaClient();
@@ -28,7 +29,7 @@ app.use(
 
 app.use(passport.session());
 
-// TODO: import routers
+app.use('/', router);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

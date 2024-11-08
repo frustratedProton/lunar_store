@@ -8,6 +8,18 @@ export const signUp = async (req, res) => {
     const { username, email, password } = req.body;
 
     try {
+        const exisitingUser = await prisma.user.findFirst({
+            where: {
+                OR: [{ username }, { email }],
+            },
+        });
+
+        if (exisitingUser) {
+            return res
+                .status(400)
+                .json({ message: 'Username or email already exits.' });
+        }
+
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const user = await prisma.user.create({
@@ -24,8 +36,34 @@ export const signUp = async (req, res) => {
     }
 };
 
-export const signIn = passport.authenticate('local', {
-    successRedirect: '/dashboard',
-    failureRedirect: '/signUp',
-    failureFlash: true,
-});
+export function signIn(req, res, next) {
+    passport.authenticate('local', (err, user, info) => {
+        if (err) {
+            return res
+                .status(500)
+                .json({ message: 'An error occurred during sign in.' });
+        }
+        if (!user) {
+            return res.status(400).json({ message: info.message });
+        }
+
+        req.logIn(user, (err) => {
+            if (err) {
+                return res.status(500).json({ message: 'Login failed.' });
+            }
+            return res
+                .status(200)
+                .json({ message: 'Signed in successfully', userId: user.id });
+        });
+    })(req, res, next);
+}
+
+export const logOut = (req, res) => {
+    req.logout((err) => {
+        if (err) {
+            res.status(500).json({ error: 'Failed to log out' });
+        }
+        res.status(200).json({ message: 'Logged out successfully' });
+        // res.redirect('/');
+    });
+};
