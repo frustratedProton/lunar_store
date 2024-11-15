@@ -4,7 +4,7 @@ import {
     deleteFolder,
     getFolder,
     updateFolder,
-} from '../controllers/folderController';
+} from '../controllers/folderController.js';
 
 const folderRouter = Router();
 

@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 export const uploadFile = async (req, res) => {
     try {
         const { file } = req;
-        const { folderId } = req.body;
+        const folderId = parseInt(req.body.folderId);
 
         if (!file) {
             return res.status(400).json({ message: 'No file uploaded' });

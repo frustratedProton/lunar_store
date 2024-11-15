@@ -22,7 +22,7 @@ export const createFolder = async (req, res) => {
 
 export const getFolder = async (req, res) => {
     const userId = req.user.id;
-
+    console.log('works', userId)
     try {
         const folders = await prisma.folder.findMany({
             where: { userId },
