@@ -1,7 +1,8 @@
 import express from 'express';
 import session from 'express-session';
 import { PrismaSessionStore } from '@quixo3/prisma-session-store';
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@prisma/client';
+import cors from 'cors';
 import passport from './config/passport.js';
 import router from './routers/indexRouter.js';
 
@@ -10,6 +11,16 @@ const prisma = new PrismaClient();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// CORS Configuration
+const corsOptions = {
+    origin: 'http://localhost:5173', // Your frontend URL
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allow methods you're using
+    allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
+    credentials: true, // Allow cookies/session to be sent
+};
+
+app.use(cors(corsOptions));
 
 app.use(
     session({
