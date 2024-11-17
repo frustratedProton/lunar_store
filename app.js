@@ -9,19 +9,20 @@ import router from './routers/indexRouter.js';
 const app = express();
 const prisma = new PrismaClient();
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
 // CORS Configuration
 const corsOptions = {
-    origin: 'http://localhost:5173', // Your frontend URL
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allow methods you're using
-    allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
-    credentials: true, // Allow cookies/session to be sent
+    origin: 'http://localhost:5173',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
 };
 
 app.use(cors(corsOptions));
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// TODO: turn on cookie flags
 app.use(
     session({
         cookie: {

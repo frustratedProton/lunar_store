@@ -67,3 +67,23 @@ export const logOut = (req, res) => {
         // res.redirect('/');
     });
 };
+
+export const checkAuth = (req, res) => {
+    if (req.isAuthenticated()) {
+        return res.status(200).json({ authenticated: true, user: req.user });
+    }
+    res.status(401).json({ authenticated: false });
+};
+
+export const getUserData = (req, res) => {
+    if (!req.isAuthenticated()) {
+        return res.status(401).json({ message: 'Unauthorized' });
+    }
+    res.status(200).json({
+        user: {
+            id: req.user.id,
+            username: req.user.username,
+            email: req.user.email,
+        },
+    });
+};
