@@ -100,3 +100,18 @@ export const downloadFile = async (req, res) => {
         console.error(error);
     }
 };
+
+export const getAllFiles = async (req, res) => {
+    try {
+        const files = await prisma.file.findMany({
+            where: {
+                userId: req.user.id, // assuming you're using user authentication
+            },
+        });
+
+        return res.json({ files });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: 'Failed to fetch files' });
+    }
+};
