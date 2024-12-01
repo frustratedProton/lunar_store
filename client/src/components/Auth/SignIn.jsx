@@ -1,6 +1,20 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import {
+    SignUpContainer as SignInContainer,
+    FloatingLabelContainer,
+    InputField,
+    FloatingLabel,
+    SubmitButton,
+} from '../styles/Auth.styles';
+import styled from 'styled-components';
+
+export const ErrorMessage = styled.p`
+    color: var(--accent);
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+`;
 
 const SignInForm = () => {
     const navigate = useNavigate();
@@ -38,12 +52,11 @@ const SignInForm = () => {
     };
 
     return (
-        <div className="sign-in-container">
+        <SignInContainer>
             <h2>Sign In</h2>
             <form onSubmit={handleSubmit}>
-                <div>
-                    <label htmlFor="username">Username:</label>
-                    <input
+                <FloatingLabelContainer>
+                    <InputField
                         type="text"
                         id="username"
                         name="username"
@@ -51,11 +64,11 @@ const SignInForm = () => {
                         onChange={handleChange}
                         required
                     />
-                </div>
+                    <FloatingLabel htmlFor="username">Username</FloatingLabel>
+                </FloatingLabelContainer>
 
-                <div>
-                    <label htmlFor="password">Password:</label>
-                    <input
+                <FloatingLabelContainer>
+                    <InputField
                         type="password"
                         id="password"
                         name="password"
@@ -63,13 +76,14 @@ const SignInForm = () => {
                         onChange={handleChange}
                         required
                     />
-                </div>
+                    <FloatingLabel htmlFor="password">Password</FloatingLabel>
+                </FloatingLabelContainer>
 
-                {error && <p className="error-message">{error}</p>}
+                {error && <ErrorMessage>{error}</ErrorMessage>}
 
-                <button type="submit">Sign In</button>
+                <SubmitButton type="submit">Sign In</SubmitButton>
             </form>
-        </div>
+        </SignInContainer>
     );
 };
 

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import authRouter from './authRouter.js';
-import fileRouter from './filerRouter.js';
+import fileRouter from './fileRouter.js';
 import folderRouter from './folderRoutes.js';
 
 const router = Router();

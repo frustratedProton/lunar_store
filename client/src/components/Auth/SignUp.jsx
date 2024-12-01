@@ -1,13 +1,20 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import {
+    SignUpContainer,
+    FloatingLabelContainer,
+    InputField,
+    FloatingLabel,
+    SubmitButton,
+} from '../styles/Auth.styles'
 
 const SignUp = () => {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-    const navigate = useNavigate(); // useNavigate for navigation
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -15,63 +22,57 @@ const SignUp = () => {
         try {
             const response = await axios.post(
                 'http://localhost:3000/auth/sign-up',
-                {
-                    username,
-                    email,
-                    password,
-                }
+                { username, email, password }
             );
             if (response.status === 201) {
-                // On success, navigate to login page
-                navigate('/signin'); // Redirect to login
+                navigate('/signin');
             }
         } catch (err) {
-            if (err.response) {
-                setError(err.response.data.message || 'Something went wrong');
-            } else {
-                setError('Network error');
-            }
+            setError(err.response?.data?.message || 'Something went wrong');
         }
     };
 
     return (
-        <div>
+        <SignUpContainer>
             <h2>Sign Up</h2>
             {error && <p>{error}</p>}
             <form onSubmit={handleSubmit}>
-                <div>
-                    <label htmlFor="username">Username</label>
-                    <input
+                <FloatingLabelContainer>
+                    <InputField
                         type="text"
                         id="username"
-                        placeholder="Username"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
+                        required
                     />
-                </div>
-                <div>
-                    <label htmlFor="email">Email</label>
-                    <input
+                    <FloatingLabel htmlFor="username">Username</FloatingLabel>
+                </FloatingLabelContainer>
+
+                <FloatingLabelContainer>
+                    <InputField
                         type="email"
                         id="email"
-                        placeholder="Email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
+                        required
                     />
-                </div>
-                <div>
-                    <label htmlFor="password">Password</label>
-                    <input
+                    <FloatingLabel htmlFor="email">Email</FloatingLabel>
+                </FloatingLabelContainer>
+
+                <FloatingLabelContainer>
+                    <InputField
                         type="password"
                         id="password"
-                        placeholder="Password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        required
                     />
-                </div>
-                <button type="submit">Sign Up</button>
+                    <FloatingLabel htmlFor="password">Password</FloatingLabel>
+                </FloatingLabelContainer>
+
+                <SubmitButton type="submit">Sign Up</SubmitButton>
             </form>
-        </div>
+        </SignUpContainer>
     );
 };
 

@@ -10,7 +10,7 @@ const FolderList = () => {
 
     const fetchFolders = async () => {
         try {
-            const response = await axios.get('http://localhost:3000/folders', {
+            const response = await axios.get('http://localhost:3000/folder', {
                 withCredentials: true,
             });
             setFolders(response.data.folders);
