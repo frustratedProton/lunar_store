@@ -1,0 +1,32 @@
+{
+  "name": "lunar_store",
+  "version": "1.0.0",
+  "description": "Stripped down Google Drive Clone",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "test": "npm run dev",
+    "start": "node --watch app.js"
+  },
+  "author": "frustraredProton",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^5.22.0",
+    "@quixo3/prisma-session-store": "^3.1.13",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "express": "^4.21.1",
+    "express-session": "^1.18.1",
+    "install": "^0.13.0",
+    "multer": "^1.4.5-lts.1",
+    "npm": "^10.9.0",
+    "passport": "^0.7.0",
+    "passport-local": "^1.0.0",
+    "pg": "^8.13.1",
+    "react-dropzone": "^14.3.5",
+    "react-helmet": "^6.1.0"
+  },
+  "devDependencies": {
+    "prisma": "^5.22.0"
+  }
+}
