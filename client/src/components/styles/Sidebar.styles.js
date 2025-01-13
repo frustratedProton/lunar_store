@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 
 export const Sidebar = styled.nav`
@@ -29,7 +29,7 @@ export const SidebarItem = styled.li`
     margin-bottom: 15px;
 `;
 
-export const SidebarLink = styled(Link)`
+export const SidebarLink = styled(NavLink)`
     display: flex;
     align-items: center;
     padding: 12px 20px;
@@ -41,10 +41,28 @@ export const SidebarLink = styled(Link)`
     position: relative;
     transition: background-color 0.3s ease, color 0.3s ease;
 
-    ${({ $isActive }) =>
-        $isActive &&
-        `background-color: hsl(155, 23%, 60%, 60%);
-        color: hsl(156, 42%, 5%, 90%);`}
+    &.active {
+        background-color: hsl(155, 23%, 60%, 60%);
+        animation: pulse 1s infinite;
+        box-shadow: 0 0 3px rgba(155, 23, 60, 0.3);
+        color: hsl(156, 42%, 5%, 90%);
+        border-right: 2px solid var(--accent);
+        transform: scale(1.01);
+
+        span {
+            color: hsl(156, 42%, 5%, 95%);
+        }
+
+        svg {
+            color: hsl(135, 31%, 5%);
+        }
+
+        &:hover {
+            svg {
+                color: hsl(135, 31%, 5%);
+            }
+        }
+    }
 
     &:hover {
         span {
@@ -60,7 +78,9 @@ export const SidebarLink = styled(Link)`
         color: hsl(156, 42%, 5%, 65%);
         transition: color 0.3s ease;
 
-        ${({ $isActive }) => $isActive && `color: hsl(156, 42%, 5%, 95%);`}
+        &.active {
+            color: hsl(156, 42%, 5%, 95%);
+        }
     }
 
     svg {
@@ -68,7 +88,9 @@ export const SidebarLink = styled(Link)`
         font-size: 1.2rem;
         transition: color 0.3s ease;
 
-        ${({ $isActive }) => $isActive && `hsl(155, 23%, 60%, 85%)`}
+        &.active {
+            color: hsl(155, 23%, 60%, 85%);
+        }
     }
 `;
 

@@ -18,7 +18,7 @@ export const DashboardContent = styled.div`
 `;
 
 export const MainContainer = styled.main`
-    border: 2px solid red;
+    /* border: 2px solid red; */
     margin-left: 220px;
     flex: 1;
     display: flex;

@@ -1,73 +1,147 @@
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 
 export const FolderDetailsContainer = styled.div`
     padding: 20px;
-    font-family: Arial, sans-serif;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 `;
 
 export const FolderTitle = styled.h1`
     font-size: 2rem;
     margin-bottom: 20px;
-    color: #333;
+    color: #2c3e50;
+`;
+
+export const InlineFlexWrapper = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 10px;
 `;
 
 export const FolderActions = styled.div`
     display: flex;
+    flex-direction: row;
+    align-items: center;
     gap: 10px;
-    margin-bottom: 20px;
+    margin-left: 10px;
 `;
 
 export const FolderInput = styled.input`
-    padding: 8px;
+    padding: 10px;
     font-size: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    width: 300px;
-`;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    width: 200px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 
-export const FolderButton = styled.button`
-    padding: 8px 16px;
-    font-size: 1rem;
-    border: none;
-    background-color: #007bff;
-    color: white;
-    border-radius: 4px;
-    cursor: pointer;
-
-    &:hover {
-        background-color: #0056b3;
+    &:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 4px rgba(0, 123, 255, 0.5);
     }
 `;
 
-export const EditButton = styled.button`
-    padding: 8px 16px;
-    font-size: 1rem;
-    border: none;
-    background-color: #ffb84d;
-    color: white;
-    border-radius: 4px;
+export const UploadButton = styled.button`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 15px;
+    font-size: 0.9rem;
     cursor: pointer;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    background-color: var(--primary, #007bff);
+    color: white;
+    transition: background-color 0.2s ease, transform 0.1s ease;
 
     &:hover {
-        background-color: #ff9c1a;
+        background-color: hsl(155, 39%, 60%);
+        transform: scale(1.01);
+    }
+
+    &:active {
+        transform: scale(0.98);
+    }
+`;
+
+export const CancelButton = styled.button`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 15px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    background-color: hsl(0, 70%, 50%);
+    color: white;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+
+    &:hover {
+        background-color: hsl(0, 70%, 60%);
+        transform: scale(1.02);
+    }
+
+    &:active {
+        transform: scale(0.98);
     }
 `;
 
 export const FileList = styled.ul`
-    list-style-type: none;
+    list-style: none;
     padding: 0;
+    margin: 0;
+    width: 100%;
 `;
 
-export const FileListItem = styled.li`
-    margin: 10px 0;
+export const FileListItem = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: hsl(158, 44%, 5%, 0.7);
+    padding: 12px 16px;
+    margin: 8px 0;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+
+    a {
+        text-decoration: none;
+        color: inherit;
+        display: flex;
+        width: 100%;
+    }
+`;
+
+export const FileLink = styled(Link)`
+    display: flex;
+    width: 100%;
+    text-decoration: none;
+    color: inherit;
+`;
+
+export const FileColumn = styled.div`
+    flex: 1;
+    padding: 0 10px;
+    text-align: left;
+    white-space: nowrap;
+    font-size: large;
+`;
+
+export const HeaderRow = styled.div`
+    display: flex;
+    padding: 1.2rem 1rem 0.8rem 1rem;
+    border-bottom: 2px solid var(--accent);
+    font-weight: bold;
 `;
 
 export const NoFilesMessage = styled.p`
-    font-size: 1.1rem;
-    color: #555;
+    font-size: 1.2rem;
+    color: #888;
+    margin: 20px 0;
+    text-align: center;
 `;
 
-// Modal Styling
 export const ModalBackground = styled.div`
     position: fixed;
     top: 0;
@@ -78,64 +152,55 @@ export const ModalBackground = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000; // Ensure the modal stays on top
+    z-index: 1000;
 `;
 
 export const ModalContent = styled.div`
-    background-color: white;
-    padding: 20px;
+    padding: 30px;
     border-radius: 8px;
+    width: 400px;
     text-align: center;
-    width: 300px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
 `;
 
 export const ModalHeader = styled.h2`
-    margin: 0;
     font-size: 1.5rem;
+    margin-bottom: 15px;
     color: #333;
 `;
 
 export const ModalButtonGroup = styled.div`
     display: flex;
-    justify-content: space-around;
-    margin-top: 15px;
+    justify-content: space-between;
+    gap: 15px;
+    margin-top: 20px;
 `;
 
-export const ModalButton = styled.button`
-    padding: 8px 16px;
-    font-size: 1rem;
-    border: none;
+export const ModalButton = styled(UploadButton)`
     background-color: #007bff;
-    color: white;
-    border-radius: 4px;
-    cursor: pointer;
-    width: 45%; // Makes buttons within the modal more uniform in width
 
     &:hover {
         background-color: #0056b3;
     }
+`;
 
-    &:first-child {
-        background-color: #ff4d4d; // Red color for the Delete button
-    }
+export const DeleteButton = styled(CancelButton)`
+    background-color: #ff4d4d;
 
-    &:first-child:hover {
-        background-color: #e60000; // Darker red when hovered
+    &:hover {
+        background-color: #e60000;
     }
 `;
 
-export const CancelButton = styled.button`
-    padding: 8px 16px;
-    font-size: 1rem;
-    border: none;
-    background-color: #ccc;
-    color: white;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-top: 10px;
+export const ButtonContainer = styled.div`
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+`;
 
-    &:hover {
-        background-color: #999;
-    }
+export const ErrorText = styled.p`
+    color: red;
+    margin-top: 10px;
+    font-size: 0.9rem;
 `;

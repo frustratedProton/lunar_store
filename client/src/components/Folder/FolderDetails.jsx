@@ -1,21 +1,24 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPen, faSyncAlt, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faFileAlt, faPen, faSyncAlt, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { Heading2 } from '../styles/Headings.styles';
 import {
     FolderDetailsContainer,
     FolderTitle,
     FolderActions,
     FolderInput,
-    FolderButton,
     FileList,
     FileListItem,
     NoFilesMessage,
-    EditButton,
     ModalBackground,
     ModalContent,
-    ModalButton,
+    UploadButton,
+    CancelButton,
+    InlineFlexWrapper,
+    FileLink,
+    FileColumn,
 } from '../styles/FolderDetails.styles';
 
 const FolderDetails = () => {
@@ -96,41 +99,44 @@ const FolderDetails = () => {
         <FolderDetailsContainer>
             <FolderTitle>{folder.name}</FolderTitle>
 
-            <div>
-                <EditButton onClick={() => setIsEditing((prev) => !prev)}>
+            <InlineFlexWrapper>
+                <UploadButton onClick={() => setIsEditing((prev) => !prev)}>
                     <FontAwesomeIcon icon={faPen} />
                     {isEditing ? 'Cancel Edit' : 'Edit Folder'}
-                </EditButton>
-            </div>
+                </UploadButton>
 
-            {isEditing && (
-                <FolderActions>
-                    <FolderInput
-                        type="text"
-                        value={newName}
-                        onChange={(e) => setNewName(e.target.value)}
-                        placeholder="New folder name"
-                    />
-                    <FolderButton
-                        onClick={handleUpdateFolder}
-                        disabled={!newName.trim()}
-                    >
-                        <FontAwesomeIcon icon={faSyncAlt} />
-                        Update Folder
-                    </FolderButton>
-                    <FolderButton onClick={openModal}>
-                        <FontAwesomeIcon icon={faTrash} />
-                        Delete Folder
-                    </FolderButton>
-                </FolderActions>
-            )}
+                {isEditing && (
+                    <FolderActions>
+                        <FolderInput
+                            type="text"
+                            value={newName}
+                            onChange={(e) => setNewName(e.target.value)}
+                            placeholder="New folder name"
+                        />
+                        <UploadButton
+                            onClick={handleUpdateFolder}
+                            disabled={!newName.trim()}
+                        >
+                            <FontAwesomeIcon icon={faSyncAlt} />
+                            Update Folder
+                        </UploadButton>
+                        <CancelButton onClick={openModal}>
+                            <FontAwesomeIcon icon={faTrash} />
+                            Delete Folder
+                        </CancelButton>
+                    </FolderActions>
+                )}
+            </InlineFlexWrapper>
 
-            <h2>Files</h2>
+            <Heading2>Files</Heading2>
             <FileList>
                 {files.length > 0 ? (
                     files.map((file) => (
                         <FileListItem key={file.id}>
-                            <Link to={`/files/${file.id}`}>{file.name}</Link>
+                            <FileLink to={`/files/${file.id}`}>
+                                <FontAwesomeIcon icon={faFileAlt} />
+                                <FileColumn>{file.name}</FileColumn>
+                            </FileLink>
                         </FileListItem>
                     ))
                 ) : (
@@ -142,10 +148,10 @@ const FolderDetails = () => {
                 <ModalBackground>
                     <ModalContent>
                         <h3>Are you sure you want to delete this folder?</h3>
-                        <ModalButton onClick={handleDeleteFolder}>
+                        <CancelButton onClick={handleDeleteFolder}>
                             Yes, Delete
-                        </ModalButton>
-                        <ModalButton onClick={closeModal}>Cancel</ModalButton>
+                        </CancelButton>
+                        <CancelButton onClick={closeModal}>Cancel</CancelButton>
                     </ModalContent>
                 </ModalBackground>
             )}

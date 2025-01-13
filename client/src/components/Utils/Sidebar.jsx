@@ -1,4 +1,3 @@
-import { useLocation } from 'react-router-dom';
 import {
     Sidebar,
     SidebarItem,
@@ -9,28 +8,23 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome, faFile, faFolder } from '@fortawesome/free-solid-svg-icons';
 
 const SidebarComponent = () => {
-    const location = useLocation();
-
-    const isActive = (path) => location.pathname === path;
-
     return (
         <Sidebar>
             <SidebarList>
                 <SidebarItem>
-                    {/* $isActive is a transient prop, not be consumed by DOM -- https://styled-components.com/docs/api#transient-props */}
-                    <SidebarLink to="/" $isActive={isActive('/')}>
+                    <SidebarLink to="/" end>
                         <FontAwesomeIcon icon={faHome} />
                         <span>Dashboard</span>
                     </SidebarLink>
                 </SidebarItem>
                 <SidebarItem>
-                    <SidebarLink to="/files" $isActive={isActive('/files')}>
+                    <SidebarLink to="/files">
                         <FontAwesomeIcon icon={faFile} />
                         <span>Files</span>
                     </SidebarLink>
                 </SidebarItem>
                 <SidebarItem>
-                    <SidebarLink to="/folders" $isActive={isActive('/folders')}>
+                    <SidebarLink to="/folders">
                         <FontAwesomeIcon icon={faFolder} />
                         <span>Folders</span>
                     </SidebarLink>

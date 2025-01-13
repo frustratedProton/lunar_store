@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 export const FilesSection = styled.section`
@@ -35,7 +36,7 @@ export const FileItem = styled.div`
     }
 `;
 
-export const FileLink = styled.a`
+export const FileLink = styled(Link)`
     display: flex;
     width: 100%;
     text-decoration: none;
