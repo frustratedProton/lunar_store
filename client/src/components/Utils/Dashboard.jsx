@@ -4,7 +4,6 @@ import axios from 'axios';
 import MainContent from './MainContent';
 
 const Dashboard = () => {
-    const [user, setUser] = useState(null);
     const [error, setError] = useState(null);
     const [files, setFiles] = useState([]);
     const [folders, setFolders] = useState([]);
@@ -31,25 +30,7 @@ const Dashboard = () => {
                 );
             }
         };
-
-        const fetchUserDetails = async () => {
-            try {
-                const response = await axios.get(
-                    'http://localhost:3000/auth/me',
-                    { withCredentials: true }
-                );
-                setUser(response.data.user);
-            } catch (error) {
-                console.error(error);
-                setError(
-                    error.response?.data?.message ||
-                        'An error occurred while fetching user details.'
-                );
-            }
-        };
-
         fetchFilesAndFolders();
-        fetchUserDetails();
     }, []);
 
     const filteredFiles = files.filter((file) =>
@@ -63,7 +44,6 @@ const Dashboard = () => {
 
     return (
         <MainContent
-            user={user}
             filteredFiles={filteredFiles}
             filteredFolders={filteredFolders}
         />

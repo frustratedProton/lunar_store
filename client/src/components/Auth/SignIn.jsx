@@ -1,20 +1,20 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import {
-    SignUpContainer as SignInContainer,
-    FloatingLabelContainer,
+    SignInContainer,
+    SignInFormContainer,
+    LeftSection,
+    RightSection,
     InputField,
-    FloatingLabel,
     SubmitButton,
+    ErrorMessage,
+    FloatingLabel,
+    FloatingLabelContainer,
+    BackgroundContainer,
+    LinksContainer,
+    StyledHeading,
 } from '../styles/Auth.styles';
-import styled from 'styled-components';
-
-export const ErrorMessage = styled.p`
-    color: var(--accent);
-    font-size: 0.875rem;
-    margin-bottom: 1rem;
-`;
 
 const SignInForm = () => {
     const navigate = useNavigate();
@@ -23,6 +23,7 @@ const SignInForm = () => {
         password: '',
     });
     const [error, setError] = useState('');
+    const [isOpen, setIsOpen] = useState(false); // New state to handle modal visibility
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -43,6 +44,7 @@ const SignInForm = () => {
                 { withCredentials: true }
             );
             if (response.status === 200) {
+                setIsOpen(false); // Hide modal after successful login
                 navigate('/');
             }
         } catch (err) {
@@ -51,39 +53,67 @@ const SignInForm = () => {
         }
     };
 
+    useEffect(() => {
+        setIsOpen(true);
+    }, []);
+
     return (
-        <SignInContainer>
-            <h2>Sign In</h2>
-            <form onSubmit={handleSubmit}>
-                <FloatingLabelContainer>
-                    <InputField
-                        type="text"
-                        id="username"
-                        name="username"
-                        value={formData.username}
-                        onChange={handleChange}
-                        required
-                    />
-                    <FloatingLabel htmlFor="username">Username</FloatingLabel>
-                </FloatingLabelContainer>
+        <BackgroundContainer>
+            <SignInContainer className={isOpen ? 'is-open' : ''}>
+                <SignInFormContainer>
+                    <LeftSection>
+                        <StyledHeading>Sign In</StyledHeading>
+                        <form onSubmit={handleSubmit}>
+                            <FloatingLabelContainer>
+                                <InputField
+                                    type="text"
+                                    id="username"
+                                    name="username"
+                                    value={formData.username}
+                                    onChange={handleChange}
+                                    required
+                                />
+                                <FloatingLabel htmlFor="username">
+                                    Username
+                                </FloatingLabel>
+                            </FloatingLabelContainer>
 
-                <FloatingLabelContainer>
-                    <InputField
-                        type="password"
-                        id="password"
-                        name="password"
-                        value={formData.password}
-                        onChange={handleChange}
-                        required
-                    />
-                    <FloatingLabel htmlFor="password">Password</FloatingLabel>
-                </FloatingLabelContainer>
+                            <FloatingLabelContainer>
+                                <InputField
+                                    type="password"
+                                    id="password"
+                                    name="password"
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                    required
+                                />
+                                <FloatingLabel htmlFor="password">
+                                    Password
+                                </FloatingLabel>
+                            </FloatingLabelContainer>
 
-                {error && <ErrorMessage>{error}</ErrorMessage>}
+                            {error && <ErrorMessage>{error}</ErrorMessage>}
 
-                <SubmitButton type="submit">Sign In</SubmitButton>
-            </form>
-        </SignInContainer>
+                            <SubmitButton type="submit">Sign In</SubmitButton>
+                        </form>
+
+                        <LinksContainer>
+                            <a href="#">Forgot your password?</a>
+                            <a href="/signup">
+                                Don&apos;t have an account? Sign up now
+                            </a>
+                        </LinksContainer>
+                    </LeftSection>
+
+                    <RightSection>
+                        <img
+                            src="../public/samsung-memory-unsplash.webp"
+                            alt="background"
+                        />
+                    </RightSection>
+                </SignInFormContainer>
+            </SignInContainer>
+        </BackgroundContainer>
     );
 };
 

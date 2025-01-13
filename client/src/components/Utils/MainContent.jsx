@@ -17,7 +17,7 @@ import {
     SortArrow,
     StorageOptions,
 } from '../styles/MainContent.styles.js';
-import { Heading1, Heading2 } from '../styles/Headings.styles.js';
+import { Heading2 } from '../styles/Headings.styles.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faFileLines,
@@ -29,7 +29,7 @@ import {
 import FileUploadModal from '../File/UploadFile.jsx';
 import CreateFolderModal from '../Folder/CreateFolder.jsx';
 
-const MainContent = ({ user, filteredFiles, filteredFolders }) => {
+const MainContent = ({ filteredFiles, filteredFolders }) => {
     const [isCreateFolderOpen, setIsCreateFolderOpen] = useState(false);
     const [folders, setFolders] = useState(filteredFolders || []);
     const [loadingFolders, setLoadingFolders] = useState(false);
@@ -88,9 +88,9 @@ const MainContent = ({ user, filteredFiles, filteredFolders }) => {
 
     return (
         <div>
-            <div>
+            {/* <div>
                 <Heading1>Welcome, {user?.username}</Heading1>
-            </div>
+            </div> */}
 
             <StorageOptions>
                 <Heading2>My Storage</Heading2>

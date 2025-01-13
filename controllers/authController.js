@@ -61,10 +61,13 @@ export function signIn(req, res, next) {
 export const logOut = (req, res) => {
     req.logout((err) => {
         if (err) {
-            res.status(500).json({ error: 'Failed to log out' });
+            return res.status(500).json({ error: 'Failed to log out' });
         }
-        res.status(200).json({ message: 'Logged out successfully' });
-        // res.redirect('/');
+
+        // Clear the session cookie
+        res.clearCookie('connect.sid');
+
+        return res.status(200).json({ message: 'Logged out successfully' });
     });
 };
 
