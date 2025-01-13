@@ -1,21 +1,19 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import { Heading2 } from '../styles/Headings.styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
+    faCircleInfo,
     faFileArrowDown,
-    faExpand,
-    faCompress,
 } from '@fortawesome/free-solid-svg-icons';
 import {
     Container,
     Header,
     ImagePreviewContainer,
-    ButtonGroup,
     Details,
-    ModalOverlay,
-    ModalContent,
-    PreviewBarContainer,
+    DownloadButton,
+    ImageContainer,
 } from '../styles/FileDetails.styles';
 
 const FileDetails = () => {
@@ -23,8 +21,10 @@ const FileDetails = () => {
     const [file, setFile] = useState(null);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [isModalOpen, setIsModalOpen] = useState(false);
     const [isDetailsVisible, setIsDetailsVisible] = useState(false);
+    const [imageWidth, setImageWidth] = useState(0);
+
+    const imageRef = useRef(null); // Ref for the image
 
     useEffect(() => {
         (async () => {
@@ -68,6 +68,12 @@ const FileDetails = () => {
         return 'other';
     };
 
+    const handleImageLoad = () => {
+        if (imageRef.current) {
+            setImageWidth(imageRef.current.offsetWidth);
+        }
+    };
+
     if (loading) return <p>Loading file details...</p>;
     if (error) return <p>{error}</p>;
 
@@ -76,39 +82,59 @@ const FileDetails = () => {
 
     return (
         <Container>
-            <Header>File Details</Header>
+            <Heading2>File Details</Heading2>
 
             {fileType === 'image' && (
-                <>
-                    <ImagePreviewContainer>
-                        <PreviewBarContainer>
-                            <h3>Preview:</h3>
-                            <div className="ButtonGroup">
-                                {/* Maximize Icon */}
-                                <button onClick={() => setIsModalOpen(true)}>
-                                    <FontAwesomeIcon icon={faExpand} />
-                                </button>
-                                {/* Show/Hide Details */}
-                                <button
-                                    onClick={() =>
-                                        setIsDetailsVisible((prev) => !prev)
-                                    }
-                                >
-                                    {isDetailsVisible
-                                        ? 'Hide Details'
-                                        : 'Show Details'}
-                                </button>
-                                {/* Download Icon */}
-                                <button onClick={handleDownload}>
-                                    <FontAwesomeIcon icon={faFileArrowDown} />
-                                </button>
-                            </div>
-                        </PreviewBarContainer>
-
-                        <img src={fileUrl} alt={file.name} />
-                    </ImagePreviewContainer>
-                </>
+                <Header>
+                    <DownloadButton onClick={handleDownload}>
+                        <FontAwesomeIcon icon={faFileArrowDown} />
+                        Download
+                    </DownloadButton>
+                    <DownloadButton
+                        onClick={() => setIsDetailsVisible(!isDetailsVisible)}
+                    >
+                        <FontAwesomeIcon icon={faCircleInfo} />
+                        Details
+                    </DownloadButton>
+                </Header>
             )}
+
+            <ImagePreviewContainer $isDetailsVisible={isDetailsVisible}>
+                <ImageContainer
+                    $isDetailsVisible={isDetailsVisible}
+                    $imageWidth={imageWidth}
+                >
+                    <div className="image-frame">
+                        <img
+                            ref={imageRef}
+                            src={fileUrl}
+                            alt={file.name}
+                            onLoad={handleImageLoad}
+                        />
+                        <div className="text-overlay">
+                            <p>{file.name}</p>
+                        </div>
+                    </div>
+                </ImageContainer>
+                {isDetailsVisible && (
+                    <Details>
+                        <p>
+                            <strong>Name:</strong> {file.name}
+                        </p>
+                        <p>
+                            <strong>Size:</strong>{' '}
+                            {(file.size / 1024).toFixed(2)} KB
+                        </p>
+                        <p>
+                            <strong>Uploaded by:</strong> {file.owner.username}
+                        </p>
+                        <p>
+                            <strong>Upload Time:</strong>{' '}
+                            {new Date(file.uploadTime).toLocaleString()}
+                        </p>
+                    </Details>
+                )}
+            </ImagePreviewContainer>
 
             {fileType === 'pdf' && (
                 <div>
@@ -123,36 +149,6 @@ const FileDetails = () => {
             )}
 
             {fileType === 'other' && <p>Unable to preview this file type.</p>}
-
-            {isDetailsVisible && (
-                <Details>
-                    <p>
-                        <strong>Name:</strong> {file.name}
-                    </p>
-                    <p>
-                        <strong>Size:</strong> {(file.size / 1024).toFixed(2)}{' '}
-                        KB
-                    </p>
-                    <p>
-                        <strong>Uploaded by:</strong> {file.owner.username}
-                    </p>
-                    <p>
-                        <strong>Upload Time:</strong>{' '}
-                        {new Date(file.uploadTime).toLocaleString()}
-                    </p>
-                </Details>
-            )}
-
-            {isModalOpen && (
-                <ModalOverlay onClick={() => setIsModalOpen(false)}>
-                    <ModalContent onClick={(e) => e.stopPropagation()}>
-                        <button onClick={() => setIsModalOpen(false)}>
-                            <FontAwesomeIcon icon={faCompress} />
-                        </button>
-                        <img src={fileUrl} alt={file.name} />
-                    </ModalContent>
-                </ModalOverlay>
-            )}
         </Container>
     );
 };

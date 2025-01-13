@@ -8,10 +8,19 @@ import FolderList from './components/Folder/FolderList';
 import FolderDetails from './components/Folder/FolderDetails';
 import DashboardLayout from './components/DashboardLayout';
 import FilesList from './components/File/FileList';
+import { Helmet, HelmetProvider } from 'react-helmet-async';
 
 const App = () => {
     return (
         <Router>
+            <HelmetProvider>
+                <Helmet>
+                    <link
+                        href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+                        rel="stylesheet"
+                    />
+                </Helmet>
+            </HelmetProvider>
             <div className="App">
                 <Routes>
                     <Route path="/signup" element={<SignUpForm />} />

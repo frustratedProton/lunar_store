@@ -1,7 +1,6 @@
 import { createGlobalStyle } from 'styled-components';
 
 const GlobalStyles = createGlobalStyle`
-    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
     :root {
         --text: hsl(156, 42%, 5%);
@@ -19,6 +18,8 @@ const GlobalStyles = createGlobalStyle`
 
     html, body {
         height: 100%;
+        font-family: 'Roboto', sans-serif;
+        font-weight: 400; /* Default weight */
     }
 
 
@@ -29,8 +30,6 @@ const GlobalStyles = createGlobalStyle`
     body {
         color: var(--text);
         background-color: var(--background);
-        font-family: 'Roboto', sans-serif;
-        font-weight: 400; /* Default weight */
     }
 
     /* Heading styles */
