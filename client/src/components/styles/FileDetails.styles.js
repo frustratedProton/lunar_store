@@ -24,6 +24,7 @@ export const ImagePreviewContainer = styled.div`
 `;
 
 export const ImageContainer = styled.div`
+    margin-top: 2em;
     flex-shrink: 0;
     width: calc(100% - 220px);
     position: relative;

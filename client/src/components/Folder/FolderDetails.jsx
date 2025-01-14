@@ -2,7 +2,12 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFileAlt, faPen, faSyncAlt, faTrash } from '@fortawesome/free-solid-svg-icons';
+import {
+    faFileAlt,
+    faPen,
+    faSyncAlt,
+    faTrash,
+} from '@fortawesome/free-solid-svg-icons';
 import { Heading2 } from '../styles/Headings.styles';
 import {
     FolderDetailsContainer,
@@ -12,14 +17,19 @@ import {
     FileList,
     FileListItem,
     NoFilesMessage,
-    ModalBackground,
-    ModalContent,
-    UploadButton,
-    CancelButton,
     InlineFlexWrapper,
     FileLink,
     FileColumn,
 } from '../styles/FolderDetails.styles';
+
+import {
+    ErrorText,
+    ModalContent,
+    ModalOverlay,
+    UploadButton,
+    ButtonContainer,
+    CancelButton,
+} from '../styles/UploadFile.styles';
 
 const FolderDetails = () => {
     const { folderId } = useParams();
@@ -81,7 +91,7 @@ const FolderDetails = () => {
                 withCredentials: true,
             });
 
-            navigate('/');
+            navigate('/folders');
         } catch (err) {
             setError('Error deleting folder.');
             console.error(err);
@@ -145,15 +155,23 @@ const FolderDetails = () => {
             </FileList>
 
             {isModalOpen && (
-                <ModalBackground>
+                <ModalOverlay>
                     <ModalContent>
-                        <h3>Are you sure you want to delete this folder?</h3>
-                        <CancelButton onClick={handleDeleteFolder}>
-                            Yes, Delete
-                        </CancelButton>
-                        <CancelButton onClick={closeModal}>Cancel</CancelButton>
+                        <Heading2>
+                            Are you sure you want to delete this folder?
+                        </Heading2>
+                        <ButtonContainer>
+                            <UploadButton onClick={handleDeleteFolder}>
+                                Yes, Delete
+                            </UploadButton>
+                            <CancelButton onClick={closeModal}>
+                                Cancel
+                            </CancelButton>
+                        </ButtonContainer>
+
+                        {error && <ErrorText>{error}</ErrorText>}
                     </ModalContent>
-                </ModalBackground>
+                </ModalOverlay>
             )}
         </FolderDetailsContainer>
     );

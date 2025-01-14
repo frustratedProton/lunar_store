@@ -106,6 +106,43 @@ export const ErrorText = styled.div`
     font-size: 14px;
 `;
 
+export const FolderSelectWrapper = styled.div`
+    position: relative;
+    margin-top: 10px;
+`;
+
+export const FolderSelectLabel = styled.label`
+    display: block;
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: #333;
+`;
+
+export const FolderSelect = styled.select`
+    border: 1px solid var(--accent);
+    width: 100%;
+    padding: 10px 40px 10px 10px;
+    font-size: 16px;
+    border-radius: 6px;
+    background-color: #fff;
+    color: var(--text);
+    cursor: pointer;
+    appearance: none;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+
+    display: flex;
+    align-items: center;
+
+    &:hover {
+        border-color: var(--accent);
+    }
+
+    &:focus {
+        border-color: var(--accent);
+        outline: none;
+    }
+`;
+
 // for createfolder.jsx since im lazy
 
 export const InputField = styled.input`

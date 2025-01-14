@@ -32,6 +32,7 @@ import CreateFolderModal from '../Folder/CreateFolder.jsx';
 const MainContent = ({ filteredFiles, filteredFolders }) => {
     const [isCreateFolderOpen, setIsCreateFolderOpen] = useState(false);
     const [folders, setFolders] = useState(filteredFolders || []);
+    const [files, setFiles] = useState(filteredFiles || []);
     const [loadingFolders, setLoadingFolders] = useState(false);
     const [error, setError] = useState(null);
     const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
@@ -43,7 +44,11 @@ const MainContent = ({ filteredFiles, filteredFolders }) => {
         } else {
             fetchFolders();
         }
-    }, [filteredFolders]);
+
+        if (filteredFiles) {
+            setFiles(filteredFiles);
+        }
+    }, [filteredFolders, filteredFiles]);
 
     const fetchFolders = async () => {
         setLoadingFolders(true);
@@ -56,6 +61,20 @@ const MainContent = ({ filteredFiles, filteredFolders }) => {
             setError(err);
         } finally {
             setLoadingFolders(false);
+        }
+    };
+
+    const fetchFiles = async () => {
+        try {
+            const response = await axios.get(
+                'http://localhost:3000/files/all',
+                {
+                    withCredentials: true,
+                }
+            );
+            setFiles(response.data.files);
+        } catch (err) {
+            console.error(err);
         }
     };
 
@@ -77,8 +96,16 @@ const MainContent = ({ filteredFiles, filteredFolders }) => {
         });
     };
 
-    const handleFolderCreated = (newFolder) => {
-        setFolders((prevFolders) => [newFolder, ...prevFolders]);
+    const handleFolderCreated = async (newFolder) => {
+        try {
+            if (newFolder && newFolder.id) {
+                setFolders((prevFolders) => [newFolder, ...prevFolders]);
+            }
+
+            await fetchFolders();
+        } catch (error) {
+            console.error('Error fetching folders after creation:', error);
+        }
         setIsCreateFolderOpen(false);
     };
 
@@ -86,12 +113,16 @@ const MainContent = ({ filteredFiles, filteredFolders }) => {
         setIsUploadModalOpen(true);
     };
 
+    const handleFileUpload = async () => {
+        try {
+            await fetchFiles();
+        } catch (error) {
+            console.error('Error fetching files after upload:', error);
+        }
+    };
+
     return (
         <div>
-            {/* <div>
-                <Heading1>Welcome, {user?.username}</Heading1>
-            </div> */}
-
             <StorageOptions>
                 <Heading2>My Storage</Heading2>
                 <IconContainer>
@@ -121,6 +152,7 @@ const MainContent = ({ filteredFiles, filteredFolders }) => {
                 <FileUploadModal
                     onClose={() => setIsUploadModalOpen(false)}
                     folderId={selectedFolderId}
+                    onFileUpload={handleFileUpload}
                 />
             )}
 
@@ -133,7 +165,7 @@ const MainContent = ({ filteredFiles, filteredFolders }) => {
                         <p>{error}</p>
                     ) : folders.length > 0 ? (
                         <FolderCardContainer>
-                            {folders.map((folder) => (
+                            {folders.slice(0, 5).map((folder) => (
                                 <FolderCard
                                     key={folder.id}
                                     to={`/folders/${folder.id}`}
@@ -179,26 +211,35 @@ const MainContent = ({ filteredFiles, filteredFolders }) => {
                     </HeaderRow>
 
                     <FileList>
-                        {filteredFiles.length > 0 ? (
+                        {files.length > 0 ? (
                             <ul>
-                                {filteredFiles.map((file) => (
-                                    <FileItem key={file.id}>
-                                        <FileLink to={`/files/${file.id}`}>
-                                            <FontAwesomeIcon
-                                                icon={faFileLines}
-                                            />
-                                            <FileColumn>{file.name}</FileColumn>
-                                            <FileColumn>
-                                                {formatFileSize(file.size)}
-                                            </FileColumn>
-                                            <FileColumn>
-                                                {formatUploadDate(
-                                                    file.uploadTime
-                                                )}
-                                            </FileColumn>
-                                        </FileLink>
-                                    </FileItem>
-                                ))}
+                                {files
+                                    .sort(
+                                        (a, b) =>
+                                            new Date(b.uploadTime) -
+                                            new Date(a.uploadTime)
+                                    )
+                                    .slice(0, 5)
+                                    .map((file) => (
+                                        <FileItem key={file.id}>
+                                            <FileLink to={`/files/${file.id}`}>
+                                                <FontAwesomeIcon
+                                                    icon={faFileLines}
+                                                />
+                                                <FileColumn>
+                                                    {file.name}
+                                                </FileColumn>
+                                                <FileColumn>
+                                                    {formatFileSize(file.size)}
+                                                </FileColumn>
+                                                <FileColumn>
+                                                    {formatUploadDate(
+                                                        file.uploadTime
+                                                    )}
+                                                </FileColumn>
+                                            </FileLink>
+                                        </FileItem>
+                                    ))}
                             </ul>
                         ) : (
                             <p>No files found.</p>

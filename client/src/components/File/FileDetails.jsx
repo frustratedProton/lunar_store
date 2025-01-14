@@ -1,11 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Heading2 } from '../styles/Headings.styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faCircleInfo,
     faFileArrowDown,
+    faTrash,
+    faPen,
+    faSyncAlt,
 } from '@fortawesome/free-solid-svg-icons';
 import {
     Container,
@@ -16,15 +19,29 @@ import {
     ImageContainer,
 } from '../styles/FileDetails.styles';
 
+import {
+    ErrorText,
+    ModalContent,
+    ModalOverlay,
+    UploadButton,
+    ButtonContainer,
+    CancelButton,
+} from '../styles/UploadFile.styles';
+import { FolderInput } from '../styles/FolderDetails.styles';
+
 const FileDetails = () => {
     const { id } = useParams();
     const [file, setFile] = useState(null);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
     const [isDetailsVisible, setIsDetailsVisible] = useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [newName, setNewName] = useState('');
     const [imageWidth, setImageWidth] = useState(0);
 
-    const imageRef = useRef(null); // Ref for the image
+    const navigate = useNavigate();
+    const imageRef = useRef(null);
 
     useEffect(() => {
         (async () => {
@@ -34,6 +51,7 @@ const FileDetails = () => {
                     { withCredentials: true }
                 );
                 setFile(response.data.fileDetails);
+                setNewName(response.data.fileDetails.name);
             } catch (error) {
                 setError(error);
             } finally {
@@ -62,7 +80,7 @@ const FileDetails = () => {
 
     const getFileType = (filename) => {
         const extension = filename.split('.').pop().toLowerCase();
-        if (['jpg', 'jpeg', 'png', 'gif', 'bmp'].includes(extension))
+        if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(extension))
             return 'image';
         if (['pdf'].includes(extension)) return 'pdf';
         return 'other';
@@ -71,6 +89,44 @@ const FileDetails = () => {
     const handleImageLoad = () => {
         if (imageRef.current) {
             setImageWidth(imageRef.current.offsetWidth);
+        }
+    };
+
+    const openDeleteModal = () => setIsDeleteModalOpen(true);
+    const closeDeleteModal = () => setIsDeleteModalOpen(false);
+
+    const openEditModal = () => setIsEditModalOpen(true);
+    const closeEditModal = () => setIsEditModalOpen(false);
+
+    const handleDeleteFile = async () => {
+        try {
+            await axios.delete(`http://localhost:3000/files/${id}`, {
+                withCredentials: true,
+            });
+            navigate('/files');
+        } catch (err) {
+            setError('Error deleting file.');
+            console.error(err);
+        }
+    };
+
+    const handleUpdateFileName = async () => {
+        if (!newName.trim()) {
+            alert('Please enter a new name for the file.');
+            return;
+        }
+
+        try {
+            const response = await axios.put(
+                `http://localhost:3000/files/${id}`,
+                { name: newName },
+                { withCredentials: true }
+            );
+            setFile(response.data);
+            closeEditModal();
+        } catch (err) {
+            setError('Error updating file name.');
+            console.error(err);
         }
     };
 
@@ -96,6 +152,14 @@ const FileDetails = () => {
                         <FontAwesomeIcon icon={faCircleInfo} />
                         Details
                     </DownloadButton>
+                    <UploadButton onClick={openDeleteModal}>
+                        <FontAwesomeIcon icon={faTrash} />
+                        Delete
+                    </UploadButton>
+                    <UploadButton onClick={openEditModal}>
+                        <FontAwesomeIcon icon={faPen} />
+                        Edit Name
+                    </UploadButton>
                 </Header>
             )}
 
@@ -149,6 +213,51 @@ const FileDetails = () => {
             )}
 
             {fileType === 'other' && <p>Unable to preview this file type.</p>}
+
+            {isDeleteModalOpen && (
+                <ModalOverlay>
+                    <ModalContent>
+                        <Heading2>
+                            Are you sure you want to delete this file?
+                        </Heading2>
+                        <ButtonContainer>
+                            <UploadButton onClick={handleDeleteFile}>
+                                Yes, Delete
+                            </UploadButton>
+                            <CancelButton onClick={closeDeleteModal}>
+                                Cancel
+                            </CancelButton>
+                        </ButtonContainer>
+
+                        {error && <ErrorText>{error}</ErrorText>}
+                    </ModalContent>
+                </ModalOverlay>
+            )}
+
+            {isEditModalOpen && (
+                <ModalOverlay>
+                    <ModalContent>
+                        <Heading2>Edit File Name</Heading2>
+                        <FolderInput
+                            type="text"
+                            value={newName}
+                            onChange={(e) => setNewName(e.target.value)}
+                            placeholder="Enter new file name"
+                        />
+                        <ButtonContainer>
+                            <UploadButton onClick={handleUpdateFileName}>
+                                <FontAwesomeIcon icon={faSyncAlt} />
+                                Update Name
+                            </UploadButton>
+                            <CancelButton onClick={closeEditModal}>
+                                Cancel
+                            </CancelButton>
+                        </ButtonContainer>
+
+                        {error && <ErrorText>{error}</ErrorText>}
+                    </ModalContent>
+                </ModalOverlay>
+            )}
         </Container>
     );
 };

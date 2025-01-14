@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useDropzone } from 'react-dropzone';
 import {
@@ -11,18 +11,50 @@ import {
     FileDetails,
     ButtonContainer,
     CancelButton,
+    FolderSelect,
+    FolderSelectWrapper,
+    FolderSelectLabel,
 } from '../styles/UploadFile.styles';
 
-const FileUploadModal = ({ onClose, folderId }) => {
+const FileUploadModal = ({ onClose, onFileUpload }) => {
     const [selectedFile, setSelectedFile] = useState(null);
     const [uploading, setUploading] = useState(false);
     const [error, setError] = useState(null);
+    const [folders, setFolders] = useState([]);
+    const [selectedFolder, setSelectedFolder] = useState(null);
+    const [loadingFolders, setLoadingFolders] = useState(true);
+
+    useEffect(() => {
+        const fetchFolders = async () => {
+            try {
+                const response = await axios.get(
+                    'http://localhost:3000/folder',
+                    {
+                        withCredentials: true,
+                    }
+                );
+
+                if (Array.isArray(response.data.folders)) {
+                    setFolders(response.data.folders);
+                } else {
+                    setError('Invalid folder data received.');
+                }
+            } catch (err) {
+                setError('Error fetching folder list.');
+                console.error(err);
+            } finally {
+                setLoadingFolders(false);
+            }
+        };
+
+        fetchFolders();
+    }, []);
 
     const onDrop = (acceptedFiles) => {
         setSelectedFile(acceptedFiles[0]);
     };
 
-    const onFileUpload = async () => {
+    const onFileUploadHandler = async () => {
         if (!selectedFile) {
             setError('Please select a file to upload.');
             return;
@@ -30,7 +62,7 @@ const FileUploadModal = ({ onClose, folderId }) => {
 
         const formData = new FormData();
         formData.append('file', selectedFile);
-        formData.append('folderId', folderId);
+        formData.append('folderId', selectedFolder);
 
         try {
             setUploading(true);
@@ -44,6 +76,7 @@ const FileUploadModal = ({ onClose, folderId }) => {
             });
 
             alert('File uploaded successfully!');
+            onFileUpload();
             onClose();
         } catch (err) {
             setUploading(false);
@@ -54,7 +87,7 @@ const FileUploadModal = ({ onClose, folderId }) => {
 
     const { getRootProps, getInputProps } = useDropzone({
         onDrop,
-        multiple: true,
+        multiple: false,
     });
 
     return (
@@ -74,8 +107,38 @@ const FileUploadModal = ({ onClose, folderId }) => {
                     </FileDetails>
                 )}
 
+                <FolderSelectWrapper>
+                    <FolderSelectLabel htmlFor="folder-select">
+                        Select Folder
+                    </FolderSelectLabel>
+                    <FolderSelect
+                        id="folder-select"
+                        onChange={(e) => setSelectedFolder(e.target.value)}
+                        value={selectedFolder || ''}
+                        disabled={loadingFolders}
+                    >
+                        <option value="" disabled>
+                            {loadingFolders
+                                ? 'Loading folders...'
+                                : 'Select a folder (optional)'}
+                        </option>
+                        {folders.length > 0 ? (
+                            folders.map((folder) => (
+                                <option key={folder.id} value={folder.id}>
+                                    {folder.name}
+                                </option>
+                            ))
+                        ) : (
+                            <option value="">No folders available</option>
+                        )}
+                    </FolderSelect>
+                </FolderSelectWrapper>
+
                 <ButtonContainer>
-                    <UploadButton onClick={onFileUpload} disabled={uploading}>
+                    <UploadButton
+                        onClick={onFileUploadHandler}
+                        disabled={uploading}
+                    >
                         {uploading ? 'Uploading...' : 'Upload'}
                     </UploadButton>
                     <CancelButton onClick={onClose} disabled={uploading}>
@@ -83,7 +146,7 @@ const FileUploadModal = ({ onClose, folderId }) => {
                     </CancelButton>
                 </ButtonContainer>
 
-                {error && <ErrorText>{error}</ErrorText>}
+                {error && !loadingFolders && <ErrorText>{error}</ErrorText>}
             </ModalContent>
         </ModalOverlay>
     );
