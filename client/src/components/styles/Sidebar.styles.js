@@ -89,7 +89,7 @@ export const SidebarLink = styled(NavLink)`
         transition: color 0.3s ease;
 
         &.active {
-            color: hsl(155, 23%, 60%, 85%);
+            color: var(--accent);
         }
     }
 `;

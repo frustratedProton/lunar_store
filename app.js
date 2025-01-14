@@ -17,12 +17,21 @@ const __dirname = path.dirname(__filename);
 
 // CORS Configuration
 const corsOptions = {
-    origin: 'http://localhost:5173',
+    origin: (origin, callback) => {
+        const allowedOrigins = [
+            'http://localhost:4173',
+            'http://localhost:5173',
+        ];
+        if (allowedOrigins.includes(origin) || !origin) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
 };
-
 app.use(cors(corsOptions));
 
 app.use(express.json());

@@ -12,7 +12,6 @@ export const uploadFile = async (req, res) => {
     try {
         const { file } = req;
         const folderId = parseInt(req.body.folderId);
-        console.log(req.user);
         if (!req.user) {
             return res.status(401).json({ message: 'User not authenticated' });
         }
@@ -85,13 +84,9 @@ export const downloadFile = async (req, res) => {
             return res.status(404).json({ error: 'File not found' });
         }
 
-        // constructing file path
         const storedFileName = file.url;
         const filePath = path.join(__dirname, '..', storedFileName);
 
-        console.log(filePath, __dirname, __filename);
-
-        // check for file path existence
         if (!fs.existsSync(filePath)) {
             return res.status(404).json({ error: 'File not found on server' });
         }
@@ -110,7 +105,7 @@ export const getAllFiles = async (req, res) => {
     try {
         const files = await prisma.file.findMany({
             where: {
-                userId: req.user.id, // assuming you're using user authentication
+                userId: req.user.id,
             },
         });
 
@@ -118,5 +113,70 @@ export const getAllFiles = async (req, res) => {
     } catch (error) {
         console.error(error);
         return res.status(500).json({ error: 'Failed to fetch files' });
+    }
+};
+
+/**
+ * Update a folder
+ */
+export const updateFile = async (req, res) => {
+    const { id } = req.params;
+    const { name } = req.body;
+    const userId = req.user.id;
+
+    try {
+        const file = await prisma.file.findUnique({
+            where: { id: parseInt(id) },
+        });
+
+        if (!file || file.userId !== userId) {
+            return res
+                .status(404)
+                .json({ error: 'Folder not found or unauthorized' });
+        }
+
+        const updatedFile = await prisma.file.update({
+            where: { id: parseInt(id) },
+            data: { name },
+        });
+
+        res.status(200).json(updatedFile);
+    } catch (error) {
+        console.error('Error updating folder:', error);
+        res.status(500).json({ error: 'Failed to update folder' });
+    }
+};
+
+/**
+ * Delete a file
+ */
+
+export const deleteFile = async (req, res) => {
+    const { id } = req.params;
+    const userId = req.user.id;
+
+    try {
+        const file = await prisma.file.findUnique({
+            where: { id: parseInt(id) },
+        });
+
+        if (!file || file.userId !== userId) {
+            return res
+                .status(404)
+                .json({ error: 'File not found or unauthorized' });
+        }
+
+        const filePath = path.join(__dirname, '..', file.url);
+
+        if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+        }
+
+        await prisma.file.delete({ where: { id: parseInt(id) } });
+
+        res.status(200).json({ message: 'File deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting file:', error);
+        res.status(500).json({ error: 'Failed to delete file' });
     }
 };

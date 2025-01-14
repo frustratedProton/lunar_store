@@ -117,6 +117,7 @@ export const StorageText = styled.div`
 `;
 export const FolderCard = styled(Link)`
     height: 14rem;
+    background: linear-gradient(135deg, hsl(156, 30%, 95%), hsl(155, 30%, 75%));
     width: 100%;
     max-width: 20rem;
     background-color: hsl(155, 39%, 54%, 5%);
@@ -151,24 +152,25 @@ export const FolderCard = styled(Link)`
         color: hsl(155, 39%, 10%);
     }
 `;
+
 export const FolderCardContainer = styled.div`
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 15px;
     padding: 20px;
     width: 100%;
     box-sizing: border-box;
 
     @media (min-width: 1200px) {
-        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    }
-
-    @media (max-width: 768px) {
         grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     }
 
+    @media (max-width: 768px) {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    }
+
     @media (max-width: 480px) {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
     }
 `;
 

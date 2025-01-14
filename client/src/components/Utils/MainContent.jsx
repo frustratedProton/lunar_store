@@ -17,7 +17,7 @@ import {
     SortArrow,
     StorageOptions,
 } from '../styles/MainContent.styles.js';
-import { Heading2 } from '../styles/Headings.styles.js';
+import { Heading1, Heading2 } from '../styles/Headings.styles.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faFileLines,
@@ -124,7 +124,7 @@ const MainContent = ({ filteredFiles, filteredFolders }) => {
     return (
         <div>
             <StorageOptions>
-                <Heading2>My Storage</Heading2>
+                <Heading1>My Storage</Heading1>
                 <IconContainer>
                     <Box onClick={handleUploadClick}>
                         <FontAwesomeIcon icon={faUpload} />
