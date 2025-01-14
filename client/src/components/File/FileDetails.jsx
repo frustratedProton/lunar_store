@@ -39,6 +39,7 @@ const FileDetails = () => {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [newName, setNewName] = useState('');
     const [imageWidth, setImageWidth] = useState(0);
+    const [imageLoading, setImageLoading] = useState(true);
 
     const navigate = useNavigate();
     const imageRef = useRef(null);
@@ -52,6 +53,15 @@ const FileDetails = () => {
                 );
                 setFile(response.data.fileDetails);
                 setNewName(response.data.fileDetails.name);
+
+                const signedUrlResponse = await axios.get(
+                    `http://localhost:3000/files/signed-url/${id}`,
+                    { withCredentials: true }
+                );
+                setFile((prevFile) => ({
+                    ...prevFile,
+                    signedUrl: signedUrlResponse.data.signedUrl,
+                }));
             } catch (error) {
                 setError(error);
             } finally {
@@ -63,14 +73,19 @@ const FileDetails = () => {
     const handleDownload = async () => {
         try {
             const response = await axios.get(
-                `http://localhost:3000/files/download/${id}`,
-                { responseType: 'blob' }
+                `http://localhost:3000/files/signed-url/${id}`
             );
+
+            const { signedUrl } = response.data;
+
+            if (!signedUrl) {
+                console.error('No signed URL received from the backend');
+                return;
+            }
+
             const link = document.createElement('a');
-            const url = window.URL.createObjectURL(new Blob([response.data]));
-            link.href = url;
+            link.href = signedUrl;
             link.setAttribute('download', file.name);
-            document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
         } catch (error) {
@@ -89,6 +104,7 @@ const FileDetails = () => {
     const handleImageLoad = () => {
         if (imageRef.current) {
             setImageWidth(imageRef.current.offsetWidth);
+            setImageLoading(false);
         }
     };
 
@@ -123,6 +139,17 @@ const FileDetails = () => {
                 { withCredentials: true }
             );
             setFile(response.data);
+
+            const signedUrlResponse = await axios.get(
+                `http://localhost:3000/files/signed-url/${id}`,
+                { withCredentials: true }
+            );
+
+            setFile((prevFile) => ({
+                ...prevFile,
+                signedUrl: signedUrlResponse.data.signedUrl,
+            }));
+
             closeEditModal();
         } catch (err) {
             setError('Error updating file name.');
@@ -133,7 +160,6 @@ const FileDetails = () => {
     if (loading) return <p>Loading file details...</p>;
     if (error) return <p>{error}</p>;
 
-    const fileUrl = `http://localhost:3000/${file.url}`;
     const fileType = getFileType(file.name);
 
     return (
@@ -169,17 +195,24 @@ const FileDetails = () => {
                     $imageWidth={imageWidth}
                 >
                     <div className="image-frame">
+                        {imageLoading && (
+                            <div className="loading-placeholder">
+                                Loading...
+                            </div>
+                        )}
                         <img
                             ref={imageRef}
-                            src={fileUrl}
+                            key={file.signedUrl} 
+                            src={file.signedUrl}
                             alt={file.name}
-                            onLoad={handleImageLoad}
+                            onLoad={handleImageLoad} 
                         />
                         <div className="text-overlay">
                             <p>{file.name}</p>
                         </div>
                     </div>
                 </ImageContainer>
+
                 {isDetailsVisible && (
                     <Details>
                         <p>
@@ -204,7 +237,7 @@ const FileDetails = () => {
                 <div>
                     <h3>Preview:</h3>
                     <embed
-                        src={fileUrl}
+                        src={file.signedUrl}
                         type="application/pdf"
                         width="100%"
                         height="600px"

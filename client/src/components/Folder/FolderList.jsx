@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { Heading1 } from '../styles/Headings.styles';
+import { Heading1, NoneFound } from '../styles/Headings.styles';
 import {
     FolderItem,
     FolderLink,
@@ -51,8 +51,6 @@ const FolderList = () => {
                 <FolderColumn>
                     Folder Name
                 </FolderColumn>
-                <FolderColumn>Last Modified</FolderColumn>
-                <FolderColumn>Size</FolderColumn>
             </HeaderRow>
 
             <FoldersList>
@@ -62,13 +60,11 @@ const FolderList = () => {
                             <FolderLink to={`/folders/${folder.id}`}>
                                 <FontAwesomeIcon icon={faFolder} />
                                 <FolderColumn>{folder.name}</FolderColumn>
-                                <FolderColumn>{folder.modified}</FolderColumn>
-                                <FolderColumn>{folder.size}</FolderColumn>
                             </FolderLink>
                         </FolderItem>
                     ))
                 ) : (
-                    <p>No folders found.</p>
+                    <NoneFound>No folders found.</NoneFound>
                 )}
             </FoldersList>
         </FoldersSection>

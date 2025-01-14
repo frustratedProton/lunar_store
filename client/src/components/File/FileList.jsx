@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { Heading1 } from '../styles/Headings.styles';
+import { Heading1, NoneFound } from '../styles/Headings.styles';
 import {
     FileItem,
     FileLink,
@@ -109,7 +109,7 @@ const FilesList = () => {
                         </FileItem>
                     ))
                 ) : (
-                    <p>No files found.</p>
+                    <NoneFound>No Files Found.</NoneFound>
                 )}
             </FileList>
         </FilesSection>

@@ -80,8 +80,7 @@ const FileUploadModal = ({ onClose, onFileUpload }) => {
             onClose();
         } catch (err) {
             setUploading(false);
-            setError('Error uploading file.');
-            console.error(err);
+            setError(`Error uploading file -- ${err}.`);
         }
     };
 
@@ -107,32 +106,31 @@ const FileUploadModal = ({ onClose, onFileUpload }) => {
                     </FileDetails>
                 )}
 
-                <FolderSelectWrapper>
-                    <FolderSelectLabel htmlFor="folder-select">
-                        Select Folder
-                    </FolderSelectLabel>
-                    <FolderSelect
-                        id="folder-select"
-                        onChange={(e) => setSelectedFolder(e.target.value)}
-                        value={selectedFolder || ''}
-                        disabled={loadingFolders}
-                    >
-                        <option value="" disabled>
-                            {loadingFolders
-                                ? 'Loading folders...'
-                                : 'Select a folder (optional)'}
-                        </option>
-                        {folders.length > 0 ? (
-                            folders.map((folder) => (
+                {/* Conditionally render FolderSelect if there are folders */}
+                {folders.length > 0 && (
+                    <FolderSelectWrapper>
+                        <FolderSelectLabel htmlFor="folder-select">
+                            Select Folder
+                        </FolderSelectLabel>
+                        <FolderSelect
+                            id="folder-select"
+                            onChange={(e) => setSelectedFolder(e.target.value)}
+                            value={selectedFolder || ''}
+                            disabled={loadingFolders}
+                        >
+                            <option value="" disabled>
+                                {loadingFolders
+                                    ? 'Loading folders...'
+                                    : 'Select a folder'}
+                            </option>
+                            {folders.map((folder) => (
                                 <option key={folder.id} value={folder.id}>
                                     {folder.name}
                                 </option>
-                            ))
-                        ) : (
-                            <option value="">No folders available</option>
-                        )}
-                    </FolderSelect>
-                </FolderSelectWrapper>
+                            ))}
+                        </FolderSelect>
+                    </FolderSelectWrapper>
+                )}
 
                 <ButtonContainer>
                     <UploadButton

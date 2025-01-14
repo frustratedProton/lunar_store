@@ -17,7 +17,7 @@ import {
     SortArrow,
     StorageOptions,
 } from '../styles/MainContent.styles.js';
-import { Heading1, Heading2 } from '../styles/Headings.styles.js';
+import { Heading1, Heading2, NoneFound } from '../styles/Headings.styles.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faFileLines,
@@ -183,7 +183,7 @@ const MainContent = ({ filteredFiles, filteredFolders }) => {
                             ))}
                         </FolderCardContainer>
                     ) : (
-                        <p>No folders found.</p>
+                        <NoneFound>No folders found.</NoneFound>
                     )}
                 </FoldersSection>
 
@@ -242,7 +242,7 @@ const MainContent = ({ filteredFiles, filteredFolders }) => {
                                     ))}
                             </ul>
                         ) : (
-                            <p>No files found.</p>
+                            <NoneFound>No files found.</NoneFound>
                         )}
                     </FileList>
                 </FilesSection>

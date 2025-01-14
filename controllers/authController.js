@@ -8,16 +8,16 @@ export const signUp = async (req, res) => {
     const { username, email, password } = req.body;
 
     try {
-        const exisitingUser = await prisma.user.findFirst({
+        const existingUser = await prisma.user.findFirst({
             where: {
                 OR: [{ username }, { email }],
             },
         });
 
-        if (exisitingUser) {
+        if (existingUser) {
             return res
                 .status(400)
-                .json({ message: 'Username or email already exits.' });
+                .json({ message: 'Username or email already exists.' });
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -30,7 +30,22 @@ export const signUp = async (req, res) => {
             },
         });
 
-        res.status(201).json({ message: 'User created Successfully', user });
+        req.login(user, (err) => {
+            if (err) {
+                return res
+                    .status(500)
+                    .json({ message: 'Failed to log in after sign up.' });
+            }
+
+            return res.status(201).json({
+                message: 'User created and signed in successfully',
+                user: {
+                    id: user.id,
+                    username: user.username,
+                    email: user.email,
+                },
+            });
+        });
     } catch (err) {
         res.status(500).json({ error: 'User creation failed' });
     }

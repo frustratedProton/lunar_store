@@ -27,10 +27,11 @@ const SignUp = () => {
         try {
             const response = await axios.post(
                 'http://localhost:3000/auth/sign-up',
-                { username, email, password }
+                { username, email, password },
+                { withCredentials: true }
             );
             if (response.status === 201) {
-                navigate('/signin');
+                navigate('/');
             }
         } catch (err) {
             setError(err.response?.data?.message || 'Something went wrong');
