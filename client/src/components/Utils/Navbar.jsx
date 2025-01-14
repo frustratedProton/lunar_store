@@ -72,7 +72,7 @@ const NavbarComponent = ({ searchQuery, handleSearch }) => {
         <Navbar>
             <LogoContainer>
                 <Logo
-                    src="../../public/lunar_store_trial2.svg"
+                    src="lunar_store_trial2.svg"
                     alt="Lunar Store Logo"
                 />
             </LogoContainer>

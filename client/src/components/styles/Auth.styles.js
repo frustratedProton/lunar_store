@@ -4,7 +4,7 @@ export const BackgroundContainer = styled.div`
     height: 100vh;
     width: 100%;
     background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-        url(../public/colin-watts-unsplash.webp);
+        url(colin-watts-unsplash.webp);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;

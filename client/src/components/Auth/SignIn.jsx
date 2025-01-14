@@ -23,7 +23,7 @@ const SignInForm = () => {
         password: '',
     });
     const [error, setError] = useState('');
-    const [isOpen, setIsOpen] = useState(false); // New state to handle modal visibility
+    const [isOpen, setIsOpen] = useState(false);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -44,7 +44,6 @@ const SignInForm = () => {
                 { withCredentials: true }
             );
             if (response.status === 200) {
-                setIsOpen(false); // Hide modal after successful login
                 navigate('/');
             }
         } catch (err) {
@@ -107,7 +106,7 @@ const SignInForm = () => {
 
                     <RightSection>
                         <img
-                            src="../public/samsung-memory-unsplash.webp"
+                            src="samsung-memory-unsplash.webp"
                             alt="background"
                         />
                     </RightSection>
