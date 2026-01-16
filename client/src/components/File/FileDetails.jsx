@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import axios from 'axios';
 import { Heading2 } from '../styles/Headings.styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -28,6 +27,7 @@ import {
 	CancelButton,
 } from '../styles/UploadFile.styles';
 import { FolderInput } from '../styles/FolderDetails.styles';
+import api from '../../api';
 
 const FileDetails = () => {
 	const { id } = useParams();
@@ -47,17 +47,15 @@ const FileDetails = () => {
 	useEffect(() => {
 		(async () => {
 			try {
-				const response = await axios.get(
-					`http://localhost:3000/files/${id}`,
-					{ withCredentials: true },
-				);
+				const response = await api.get(`/files/${id}`);
+
 				setFile(response.data.fileDetails);
 				setNewName(response.data.fileDetails.name);
 
-				const signedUrlResponse = await axios.get(
-					`http://localhost:3000/files/signed-url/${id}`,
-					{ withCredentials: true },
+				const signedUrlResponse = await api.get(
+					`/files/signed-url/${id}`,
 				);
+
 				setFile((prevFile) => ({
 					...prevFile,
 					signedUrl: signedUrlResponse.data.signedUrl,
@@ -72,9 +70,8 @@ const FileDetails = () => {
 
 	const handleDownload = async () => {
 		try {
-			const response = await axios.get(
-				`http://localhost:3000/files/signed-url/${id}`,
-			);
+			const response = await api.get(`/files/signed-url/${id}`);
+
 
 			const { signedUrl } = response.data;
 
@@ -116,9 +113,7 @@ const FileDetails = () => {
 
 	const handleDeleteFile = async () => {
 		try {
-			await axios.delete(`http://localhost:3000/files/${id}`, {
-				withCredentials: true,
-			});
+			await api.delete(`/files/${id}`);
 			navigate('/files');
 		} catch (err) {
 			setError('Error deleting file.');
@@ -133,11 +128,7 @@ const FileDetails = () => {
 		}
 
 		try {
-			await axios.put(
-				`http://localhost:3000/files/${id}`,
-				{ name: newName },
-				{ withCredentials: true },
-			);
+			await api.put(`/files/${id}`, { name: newName });
 			// setFile(response.data);
 
 			setFile((prevFile) => ({
@@ -145,10 +136,7 @@ const FileDetails = () => {
 				name: newName,
 			}));
 
-			const signedUrlResponse = await axios.get(
-				`http://localhost:3000/files/signed-url/${id}`,
-				{ withCredentials: true },
-			);
+			const signedUrlResponse = await api.get(`/files/signed-url/${id}`);
 
 			setFile((prevFile) => ({
 				...prevFile,
