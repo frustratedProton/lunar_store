@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import { Navigate } from 'react-router-dom';
+import api from '../../api';
 
 const PrivateRoute = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(null);
@@ -10,9 +10,7 @@ const PrivateRoute = ({ children }) => {
     useEffect(() => {
         const checkAuth = async () => {
             try {
-                const res = await axios.get('http://localhost:3000/auth/me', {
-                    withCredentials: true,
-                });
+                const res = await api.get('/auth/me');
                 if (res.status === 200) {
                     setIsAuthenticated(true);
                 } else {

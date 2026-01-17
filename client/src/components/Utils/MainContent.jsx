@@ -54,9 +54,6 @@ const MainContent = ({ filteredFiles, filteredFolders }) => {
     const fetchFolders = async () => {
         setLoadingFolders(true);
         try {
-            // const response = await axios.get('http://localhost:3000/folder', {
-            //     withCredentials: true,
-            // });
 
             const response = await api.get('/folder');
 
@@ -70,12 +67,6 @@ const MainContent = ({ filteredFiles, filteredFolders }) => {
 
     const fetchFiles = async () => {
         try {
-            // const response = await axios.get(
-            //     'http://localhost:3000/files/all',
-            //     {
-            //         withCredentials: true,
-            //     }
-            // );
             const response = await api.get('/files/all');
             setFiles(response.data.files);
         } catch (err) {

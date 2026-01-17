@@ -22,17 +22,12 @@ const SignUp = () => {
 	const navigate = useNavigate();
 
 	const handleSubmit = async (e) => {
-		e.preventDefault();
+    e.preventDefault();
 
 		try {
-			// const response = await axios.post(
-			//     'http://localhost:3000/auth/sign-up',
-			//     { username, email, password },
-			//     { withCredentials: true }
-			// );
-
 			const response = await api.post('/auth/sign-up', {
 				username,
+                email,
 				password,
 			});
 

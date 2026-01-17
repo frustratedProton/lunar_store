@@ -22,12 +22,6 @@ const CreateFolderModal = ({ onClose, onFolderCreated }) => {
 		}
 
 		try {
-			// const response = await axios.post(
-			//     'http://localhost:3000/folder',
-			//     { name: folderName },
-			//     { withCredentials: true }
-			// );
-
 			const response = await api.post('/folder', { name: folderName });
 
 			onFolderCreated(response.data.folder);

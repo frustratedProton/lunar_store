@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -46,11 +45,6 @@ const FolderDetails = () => {
 	useEffect(() => {
 		const fetchFolderDetails = async () => {
 			try {
-				// const response = await axios.get(
-				//     `http://localhost:3000/folder/${folderId}`,
-				//     { withCredentials: true }
-				// );
-
 				const response = await api.get(`/folder/${folderId}`);
 
 				setFolder(response.data.folder);
@@ -73,12 +67,6 @@ const FolderDetails = () => {
 		}
 
 		try {
-			// const response = await axios.put(
-			//     `http://localhost:3000/folder/${folderId}`,
-			//     { name: newName },
-			//     { withCredentials: true }
-			// );
-
 			const response = await api.put(`/folder/${folderId}`, {
 				name: newName,
 			});
@@ -94,9 +82,7 @@ const FolderDetails = () => {
 
 	const handleDeleteFolder = async () => {
 		try {
-			await axios.delete(`http://localhost:3000/folder/${folderId}`, {
-				withCredentials: true,
-			});
+            await api.delete(`/folder/${folderId}`)
 
 			navigate('/folders');
 		} catch (err) {

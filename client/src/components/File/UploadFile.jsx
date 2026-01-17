@@ -27,13 +27,6 @@ const FileUploadModal = ({ onClose, onFileUpload }) => {
 	useEffect(() => {
 		const fetchFolders = async () => {
 			try {
-				// const response = await axios.get(
-				//     'http://localhost:3000/folder',
-				//     {
-				//         withCredentials: true,
-				//     }
-				// );
-
 				const response = await api.get('/folder');
 
 				if (Array.isArray(response.data.folders)) {
@@ -69,14 +62,6 @@ const FileUploadModal = ({ onClose, onFileUpload }) => {
 		try {
 			setUploading(true);
 			setError(null);
-
-			// await axios.post('http://localhost:3000/files/upload', formData, {
-			//     headers: {
-			//         'Content-Type': 'multipart/form-data',
-			//     },
-			//     withCredentials: true,
-			// });
-
 			await api.post('/files/upload', formData, {
 				headers: {
 					'Content-Type': 'multipart/form-data',

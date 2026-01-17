@@ -13,15 +13,6 @@ const Dashboard = () => {
     useEffect(() => {
         const fetchFilesAndFolders = async () => {
             try {
-                // const fileResponse = await axios.get(
-                //     'http://localhost:3000/files/all',
-                //     { withCredentials: true }
-                // );
-                // const folderResponse = await axios.get(
-                //     'http://localhost:3000/folder',
-                //     { withCredentials: true }
-                // );
-
                 const fileResponse = await api.get('/files/all');
                 const folderResponse = await api.get('/folder')
 

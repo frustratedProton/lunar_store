@@ -14,6 +14,8 @@ import { fileURLToPath } from 'url';
 const app = express();
 const prisma = new PrismaClient();
 
+app.set('trust proxy', 1); 
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -44,10 +46,13 @@ app.use(
 	session({
 		cookie: {
 			maxAge: 7 * 24 * 60 * 60 * 1000,
+			httpOnly: true,
+			secure: true,
+			sameSite: 'none',
 		},
-		secret: 'glory-to-mankind',
-		resave: true,
-		saveUninitialized: true,
+		secret: process.env.SESSION_SECRET || 'glory-to-mankind', // will change to .env
+		resave: false,
+		saveUninitialized: false,
 		store: new PrismaSessionStore(prisma, {
 			checkPeriod: 2 * 60 * 1000,
 			dbRecordIdIsSessionId: true,
@@ -55,6 +60,7 @@ app.use(
 		}),
 	}),
 );
+
 
 app.use(passport.session());
 

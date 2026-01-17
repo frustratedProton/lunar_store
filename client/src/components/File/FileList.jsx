@@ -23,11 +23,6 @@ const FilesList = () => {
 
     const fetchAllFiles = async () => {
         try {
-            // const response = await axios.get(
-            //     'http://localhost:3000/files/all',
-            //     { withCredentials: true }
-            // );
-
             const response = await api.get('/files/all')
 
             if (JSON.stringify(response.data.files) !== JSON.stringify(files)) {

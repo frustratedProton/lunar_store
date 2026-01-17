@@ -37,11 +37,6 @@ const NavbarComponent = ({ searchQuery, handleSearch }) => {
 	useEffect(() => {
 		const fetchUserDetails = async () => {
 			try {
-				// const response = await axios.get(
-				//     'http://localhost:3000/auth/me',
-				//     { withCredentials: true }
-				// );
-
 				const response = await api.get('/auth/me');
 				setUser(response.data.user);
 			} catch (error) {
@@ -54,11 +49,6 @@ const NavbarComponent = ({ searchQuery, handleSearch }) => {
 
 	const handleLogout = async () => {
 		try {
-			// await axios.post(
-			//     'http://localhost:3000/auth/log-out',
-			//     {},
-			//     { withCredentials: true }
-			// );
 			await api.post('/auth/log-out');
 
 			setUser(null);
