@@ -3,178 +3,185 @@ import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-    faFileAlt,
-    faPen,
-    faSyncAlt,
-    faTrash,
+	faFileAlt,
+	faPen,
+	faSyncAlt,
+	faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import { Heading2 } from '../styles/Headings.styles';
 import {
-    FolderDetailsContainer,
-    FolderTitle,
-    FolderActions,
-    FolderInput,
-    FileList,
-    FileListItem,
-    NoFilesMessage,
-    InlineFlexWrapper,
-    FileLink,
-    FileColumn,
+	FolderDetailsContainer,
+	FolderTitle,
+	FolderActions,
+	FolderInput,
+	FileList,
+	FileListItem,
+	NoFilesMessage,
+	InlineFlexWrapper,
+	FileLink,
+	FileColumn,
 } from '../styles/FolderDetails.styles';
 
 import {
-    ErrorText,
-    ModalContent,
-    ModalOverlay,
-    UploadButton,
-    ButtonContainer,
-    CancelButton,
+	ErrorText,
+	ModalContent,
+	ModalOverlay,
+	UploadButton,
+	ButtonContainer,
+	CancelButton,
 } from '../styles/UploadFile.styles';
+import api from '../../api';
 
 const FolderDetails = () => {
-    const { folderId } = useParams();
-    const navigate = useNavigate();
-    const [folder, setFolder] = useState(null);
-    const [files, setFiles] = useState([]);
-    const [newName, setNewName] = useState('');
-    const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [isEditing, setIsEditing] = useState(false);
-    const [isModalOpen, setIsModalOpen] = useState(false);
+	const { folderId } = useParams();
+	const navigate = useNavigate();
+	const [folder, setFolder] = useState(null);
+	const [files, setFiles] = useState([]);
+	const [newName, setNewName] = useState('');
+	const [error, setError] = useState(null);
+	const [loading, setLoading] = useState(true);
+	const [isEditing, setIsEditing] = useState(false);
+	const [isModalOpen, setIsModalOpen] = useState(false);
 
-    useEffect(() => {
-        const fetchFolderDetails = async () => {
-            try {
-                const response = await axios.get(
-                    `http://localhost:3000/folder/${folderId}`,
-                    { withCredentials: true }
-                );
+	useEffect(() => {
+		const fetchFolderDetails = async () => {
+			try {
+				// const response = await axios.get(
+				//     `http://localhost:3000/folder/${folderId}`,
+				//     { withCredentials: true }
+				// );
 
-                setFolder(response.data.folder);
-                setFiles(response.data.folder.files || []);
-            } catch (err) {
-                setError('Failed to fetch folder details.');
-                console.error(err);
-            } finally {
-                setLoading(false);
-            }
-        };
+				const response = await api.get(`/folder/${folderId}`);
 
-        fetchFolderDetails();
-    }, [folderId]);
+				setFolder(response.data.folder);
+				setFiles(response.data.folder.files || []);
+			} catch (err) {
+				setError('Failed to fetch folder details.');
+				console.error(err);
+			} finally {
+				setLoading(false);
+			}
+		};
 
-    const handleUpdateFolder = async () => {
-        if (!newName.trim()) {
-            alert('Please enter a new name for the folder.');
-            return;
-        }
+		fetchFolderDetails();
+	}, [folderId]);
 
-        try {
-            const response = await axios.put(
-                `http://localhost:3000/folder/${folderId}`,
-                { name: newName },
-                { withCredentials: true }
-            );
+	const handleUpdateFolder = async () => {
+		if (!newName.trim()) {
+			alert('Please enter a new name for the folder.');
+			return;
+		}
 
-            setFolder(response.data);
-            setNewName('');
-            setIsEditing(false);
-        } catch (err) {
-            setError('Error updating folder.');
-            console.error(err);
-        }
-    };
+		try {
+			// const response = await axios.put(
+			//     `http://localhost:3000/folder/${folderId}`,
+			//     { name: newName },
+			//     { withCredentials: true }
+			// );
 
-    const handleDeleteFolder = async () => {
-        try {
-            await axios.delete(`http://localhost:3000/folder/${folderId}`, {
-                withCredentials: true,
-            });
+			const response = await api.put(`/folder/${folderId}`, {
+				name: newName,
+			});
 
-            navigate('/folders');
-        } catch (err) {
-            setError('Error deleting folder.');
-            console.error(err);
-        }
-    };
+			setFolder(response.data);
+			setNewName('');
+			setIsEditing(false);
+		} catch (err) {
+			setError('Error updating folder.');
+			console.error(err);
+		}
+	};
 
-    const openModal = () => setIsModalOpen(true);
-    const closeModal = () => setIsModalOpen(false);
+	const handleDeleteFolder = async () => {
+		try {
+			await axios.delete(`http://localhost:3000/folder/${folderId}`, {
+				withCredentials: true,
+			});
 
-    if (loading) return <p>Loading folder details...</p>;
-    if (error) return <p>{error}</p>;
-    if (!folder) return <p>Folder not found.</p>;
+			navigate('/folders');
+		} catch (err) {
+			setError('Error deleting folder.');
+			console.error(err);
+		}
+	};
 
-    return (
-        <FolderDetailsContainer>
-            <FolderTitle>{folder.name}</FolderTitle>
+	const openModal = () => setIsModalOpen(true);
+	const closeModal = () => setIsModalOpen(false);
 
-            <InlineFlexWrapper>
-                <UploadButton onClick={() => setIsEditing((prev) => !prev)}>
-                    <FontAwesomeIcon icon={faPen} />
-                    {isEditing ? 'Cancel Edit' : 'Edit Folder'}
-                </UploadButton>
+	if (loading) return <p>Loading folder details...</p>;
+	if (error) return <p>{error}</p>;
+	if (!folder) return <p>Folder not found.</p>;
 
-                {isEditing && (
-                    <FolderActions>
-                        <FolderInput
-                            type="text"
-                            value={newName}
-                            onChange={(e) => setNewName(e.target.value)}
-                            placeholder="New folder name"
-                        />
-                        <UploadButton
-                            onClick={handleUpdateFolder}
-                            disabled={!newName.trim()}
-                        >
-                            <FontAwesomeIcon icon={faSyncAlt} />
-                            Update Folder
-                        </UploadButton>
-                        <CancelButton onClick={openModal}>
-                            <FontAwesomeIcon icon={faTrash} />
-                            Delete Folder
-                        </CancelButton>
-                    </FolderActions>
-                )}
-            </InlineFlexWrapper>
+	return (
+		<FolderDetailsContainer>
+			<FolderTitle>{folder.name}</FolderTitle>
 
-            <Heading2>Files</Heading2>
-            <FileList>
-                {files.length > 0 ? (
-                    files.map((file) => (
-                        <FileListItem key={file.id}>
-                            <FileLink to={`/files/${file.id}`}>
-                                <FontAwesomeIcon icon={faFileAlt} />
-                                <FileColumn>{file.name}</FileColumn>
-                            </FileLink>
-                        </FileListItem>
-                    ))
-                ) : (
-                    <NoFilesMessage>No files in this folder.</NoFilesMessage>
-                )}
-            </FileList>
+			<InlineFlexWrapper>
+				<UploadButton onClick={() => setIsEditing((prev) => !prev)}>
+					<FontAwesomeIcon icon={faPen} />
+					{isEditing ? 'Cancel Edit' : 'Edit Folder'}
+				</UploadButton>
 
-            {isModalOpen && (
-                <ModalOverlay>
-                    <ModalContent>
-                        <Heading2>
-                            Are you sure you want to delete this folder?
-                        </Heading2>
-                        <ButtonContainer>
-                            <UploadButton onClick={handleDeleteFolder}>
-                                Yes, Delete
-                            </UploadButton>
-                            <CancelButton onClick={closeModal}>
-                                Cancel
-                            </CancelButton>
-                        </ButtonContainer>
+				{isEditing && (
+					<FolderActions>
+						<FolderInput
+							type="text"
+							value={newName}
+							onChange={(e) => setNewName(e.target.value)}
+							placeholder="New folder name"
+						/>
+						<UploadButton
+							onClick={handleUpdateFolder}
+							disabled={!newName.trim()}
+						>
+							<FontAwesomeIcon icon={faSyncAlt} />
+							Update Folder
+						</UploadButton>
+						<CancelButton onClick={openModal}>
+							<FontAwesomeIcon icon={faTrash} />
+							Delete Folder
+						</CancelButton>
+					</FolderActions>
+				)}
+			</InlineFlexWrapper>
 
-                        {error && <ErrorText>{error}</ErrorText>}
-                    </ModalContent>
-                </ModalOverlay>
-            )}
-        </FolderDetailsContainer>
-    );
+			<Heading2>Files</Heading2>
+			<FileList>
+				{files.length > 0 ? (
+					files.map((file) => (
+						<FileListItem key={file.id}>
+							<FileLink to={`/files/${file.id}`}>
+								<FontAwesomeIcon icon={faFileAlt} />
+								<FileColumn>{file.name}</FileColumn>
+							</FileLink>
+						</FileListItem>
+					))
+				) : (
+					<NoFilesMessage>No files in this folder.</NoFilesMessage>
+				)}
+			</FileList>
+
+			{isModalOpen && (
+				<ModalOverlay>
+					<ModalContent>
+						<Heading2>
+							Are you sure you want to delete this folder?
+						</Heading2>
+						<ButtonContainer>
+							<UploadButton onClick={handleDeleteFolder}>
+								Yes, Delete
+							</UploadButton>
+							<CancelButton onClick={closeModal}>
+								Cancel
+							</CancelButton>
+						</ButtonContainer>
+
+						{error && <ErrorText>{error}</ErrorText>}
+					</ModalContent>
+				</ModalOverlay>
+			)}
+		</FolderDetailsContainer>
+	);
 };
 
 export default FolderDetails;

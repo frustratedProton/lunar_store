@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+// import axios from 'axios';
 import {
     Box,
     Column,
@@ -28,6 +28,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import FileUploadModal from '../File/UploadFile.jsx';
 import CreateFolderModal from '../Folder/CreateFolder.jsx';
+import api from '../../api.js';
 
 const MainContent = ({ filteredFiles, filteredFolders }) => {
     const [isCreateFolderOpen, setIsCreateFolderOpen] = useState(false);
@@ -53,9 +54,12 @@ const MainContent = ({ filteredFiles, filteredFolders }) => {
     const fetchFolders = async () => {
         setLoadingFolders(true);
         try {
-            const response = await axios.get('http://localhost:3000/folder', {
-                withCredentials: true,
-            });
+            // const response = await axios.get('http://localhost:3000/folder', {
+            //     withCredentials: true,
+            // });
+
+            const response = await api.get('/folder');
+
             setFolders(response.data.folders);
         } catch (err) {
             setError(err);
@@ -66,12 +70,13 @@ const MainContent = ({ filteredFiles, filteredFolders }) => {
 
     const fetchFiles = async () => {
         try {
-            const response = await axios.get(
-                'http://localhost:3000/files/all',
-                {
-                    withCredentials: true,
-                }
-            );
+            // const response = await axios.get(
+            //     'http://localhost:3000/files/all',
+            //     {
+            //         withCredentials: true,
+            //     }
+            // );
+            const response = await api.get('/files/all');
             setFiles(response.data.files);
         } catch (err) {
             console.error(err);

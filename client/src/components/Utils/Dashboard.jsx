@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
-import axios from 'axios';
+// import axios from 'axios';
 import MainContent from './MainContent';
+import api from '../../api';
 
 const Dashboard = () => {
     const [error, setError] = useState(null);
@@ -12,14 +13,18 @@ const Dashboard = () => {
     useEffect(() => {
         const fetchFilesAndFolders = async () => {
             try {
-                const fileResponse = await axios.get(
-                    'http://localhost:3000/files/all',
-                    { withCredentials: true }
-                );
-                const folderResponse = await axios.get(
-                    'http://localhost:3000/folder',
-                    { withCredentials: true }
-                );
+                // const fileResponse = await axios.get(
+                //     'http://localhost:3000/files/all',
+                //     { withCredentials: true }
+                // );
+                // const folderResponse = await axios.get(
+                //     'http://localhost:3000/folder',
+                //     { withCredentials: true }
+                // );
+
+                const fileResponse = await api.get('/files/all');
+                const folderResponse = await api.get('/folder')
+
                 setFiles(fileResponse.data.files || []);
                 setFolders(folderResponse.data.folders || []);
             } catch (error) {

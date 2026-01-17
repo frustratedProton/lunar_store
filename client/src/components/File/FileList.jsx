@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Heading1, NoneFound } from '../styles/Headings.styles';
 import {
@@ -13,6 +12,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSort, faFileLines } from '@fortawesome/free-solid-svg-icons';
 import { useOutletContext } from 'react-router-dom';
+import api from '../../api';
 
 const FilesList = () => {
     const [files, setFiles] = useState([]);
@@ -23,10 +23,12 @@ const FilesList = () => {
 
     const fetchAllFiles = async () => {
         try {
-            const response = await axios.get(
-                'http://localhost:3000/files/all',
-                { withCredentials: true }
-            );
+            // const response = await axios.get(
+            //     'http://localhost:3000/files/all',
+            //     { withCredentials: true }
+            // );
+
+            const response = await api.get('/files/all')
 
             if (JSON.stringify(response.data.files) !== JSON.stringify(files)) {
                 setFiles(response.data.files);
