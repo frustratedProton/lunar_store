@@ -25,6 +25,7 @@ const corsOptions = {
 		const allowedOrigins = [
 			'http://localhost:4173',
 			'http://localhost:5173',
+			'https://lunar-store-two.vercel.app',
 		];
 		if (allowedOrigins.includes(origin) || !origin) {
 			callback(null, true);
