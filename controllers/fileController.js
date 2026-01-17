@@ -10,15 +10,13 @@ const __dirname = path.dirname(__filename);
 
 export const uploadFile = async (req, res) => {
 	const { file } = req;
-	const folderId = parseInt(req.body.folderId);
+	const folderId = req.body.folderId ? parseInt(req.body.folderId) : null;
 
 	if (!file) {
 		return res.status(400).json({ message: 'No file uploaded' });
 	}
 
-	const filePath = `uploads/${req.user.id}/${Date.now()}-${
-		file.originalname
-	}`;
+	const filePath = `uploads/${req.user.id}/${Date.now()}-${file.originalname}`;
 
 	try {
 		const { data, error } = await supabase.storage
@@ -31,15 +29,13 @@ export const uploadFile = async (req, res) => {
 				.json({ message: 'Error uploading file to Supabase', error });
 		}
 
-		const fileUrl = `${process.env.SUPABASE_PROJECT_URL}/public/${data.path}`;
-
 		const newFile = await prisma.file.create({
 			data: {
 				name: file.originalname,
 				size: file.size,
 				filePath: data.path,
 				userId: req.user.id,
-				folderId: folderId || null,
+				folderId: folderId,
 			},
 		});
 		return res
@@ -55,10 +51,14 @@ export const uploadFile = async (req, res) => {
 
 export const getSignedUrl = async (req, res) => {
 	const fileId = parseInt(req.params.id);
+	const userId = req.user.id; 
 
 	try {
-		const file = await prisma.file.findUnique({
-			where: { id: fileId },
+		const file = await prisma.file.findFirst({
+			where: {
+				id: fileId,
+				userId: userId,
+			},
 		});
 
 		if (!file) {
@@ -82,12 +82,18 @@ export const getSignedUrl = async (req, res) => {
 
 export const getFileDetails = async (req, res) => {
 	const fileId = parseInt(req.params.id);
+	const userId = req.user.id; 
 
 	try {
-		const file = await prisma.file.findUnique({
-			where: { id: fileId },
+		const file = await prisma.file.findFirst({
+			where: {
+				id: fileId,
+				userId: userId,
+			},
 			include: {
-				user: true,
+				user: {
+					select: { username: true }, 
+				},
 			},
 		});
 
@@ -98,7 +104,7 @@ export const getFileDetails = async (req, res) => {
 		const fileDetails = {
 			name: file.name,
 			size: file.size,
-			uploadTime: file.uploadTime,
+			uploadTime: file.uploadTime || file.createdAt, 
 			owner: {
 				username: file.user.username,
 			},
@@ -130,9 +136,6 @@ export const getAllFiles = async (req, res) => {
 	}
 };
 
-/**
- * Update a folder
- */
 export const updateFile = async (req, res) => {
 	const { id } = req.params;
 	const { name } = req.body;
@@ -146,25 +149,20 @@ export const updateFile = async (req, res) => {
 		if (!file || file.userId !== userId) {
 			return res
 				.status(404)
-				.json({ error: 'Folder not found or unauthorized' });
+				.json({ error: 'File not found or unauthorized' });
 		}
 
 		const updatedFile = await prisma.file.update({
 			where: { id: parseInt(id) },
 			data: { name },
-			include: { user: true },
 		});
 
 		res.status(200).json(updatedFile);
 	} catch (error) {
-		console.error('Error updating folder:', error);
-		res.status(500).json({ error: 'Failed to update folder' });
+		console.error('Error updating file:', error);
+		res.status(500).json({ error: 'Failed to update file' });
 	}
 };
-
-/**
- * Delete a file
- */
 
 export const deleteFile = async (req, res) => {
 	const { id } = req.params;
@@ -181,16 +179,13 @@ export const deleteFile = async (req, res) => {
 				.json({ error: 'File not found or unauthorized' });
 		}
 
-		// const filePath = path.join(__dirname, '..', file.url);
-
-		// if (fs.existsSync(filePath)) {
-		//     fs.unlinkSync(filePath);
-		// }
-
-		const filePath = file.url;
-		const { data, error } = await supabase.storage
+		const { error } = await supabase.storage
 			.from('uploads')
-			.remove([filePath]);
+			.remove([file.filePath]);
+
+		if (error) {
+			console.error('Supabase deletion error:', error);
+		}
 
 		await prisma.file.delete({ where: { id: parseInt(id) } });
 
